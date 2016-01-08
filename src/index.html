@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <div class="client"></div>
+    <div class="client"></div>
+    <div class="client"></div>
+  </body>
+</html>
+
+<style>
+.client {
+	float: left;
+	top: 0;
+	outline: 1px solid black;
+	height: 500px;
+	width: 200px;
+}
+input {
+	width: 100%;
+}
+</style>
+
+<script>
+
+function clientSetup(client) {
+	var ws = new WebSocket("ws://localhost:9160");
+	var log = [];
+
+	var input = document.createElement("input");
+	client.appendChild(input);
+	input.onkeydown = function(ev) {
+		switch (ev.keyCode) {
+			/* enter sends message */ case 13: ws.send(this.value); break;
+			/* tab rotates client  */ case 9: inputs[ (inputs.indexOf(this)+1) % inputs.length].focus(); return false;
+		}
+	}
+
+	var output = document.createElement("div");
+	client.appendChild(output);
+	ws.onmessage = msg => output.innerHTML += "<div>"+msg.data+"</div>";
+
+	return input
+}
+
+var inputs = Array.from(document.getElementsByClassName("client")).map(clientSetup);
+inputs[Math.floor(Math.random()*inputs.length)].focus();
+
+</script>
