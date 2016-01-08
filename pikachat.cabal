@@ -16,7 +16,7 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 executable haskell-websock
-  main-is:             Main.lhs
+  main-is:             Main.hs
   -- other-modules:
   -- other-extensions:
   build-depends:       base >=4.8 && <4.9
