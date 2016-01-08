@@ -15,7 +15,9 @@
 	top: 0;
 	outline: 1px solid black;
 	height: 500px;
-	width: 200px;
+	width: 250px;
+	overflow-x: hidden;
+	overflow-y: scroll;
 }
 input {
 	width: 100%;
@@ -25,21 +27,26 @@ input {
 <script>
 
 function clientSetup(client) {
-	var ws = new WebSocket("ws://localhost:9160");
-	var log = [];
 
 	var input = document.createElement("input");
 	client.appendChild(input);
 	input.onkeydown = function(ev) {
 		switch (ev.keyCode) {
 			/* enter sends message */ case 13: ws.send(this.value); break;
-			/* tab rotates client  */ case 9: inputs[ (inputs.indexOf(this)+1) % inputs.length].focus(); return false;
+			/* tab rotates active  */ case 9:  inputs[(inputs.indexOf(this)+1)%inputs.length].focus(); return false;
 		}
 	}
 
 	var output = document.createElement("div");
 	client.appendChild(output);
-	ws.onmessage = msg => output.innerHTML += "<div>"+msg.data+"</div>";
+
+	var ws;
+	function connect() {
+		ws = new WebSocket("ws://localhost:9160");
+		ws.onmessage = msg => output.innerHTML += "<div>"+msg.data+"</div>";
+		ws.onclose = msg => connect();
+	}
+	connect();
 
 	return input
 }
